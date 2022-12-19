@@ -2,6 +2,11 @@ import logging
 import numpy as np
 from acoustics.monopole import Monopole
 import matplotlib.pyplot as plt
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
+plt.rcParams['font.size'] = 14
+plt.rcParams['xtick.labelsize'] = 12
+plt.rcParams['ytick.labelsize'] = 12
 
 
 

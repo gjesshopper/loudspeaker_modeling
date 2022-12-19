@@ -1,5 +1,10 @@
 from scipy.io import loadmat   #to read .mat files
 import matplotlib.pyplot as plt
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
+plt.rcParams['font.size'] = 14
+plt.rcParams['xtick.labelsize'] = 12
+plt.rcParams['ytick.labelsize'] = 12
 import numpy as np
 from acoustics.loudspeaker import Loudspeaker
 from acoustics.monopole import Monopole
@@ -8,7 +13,8 @@ def dB(x):
     return 20*np.log10(np.abs(x))
 
 """
-Script that recreates the measured directivity for a closed box loudspeaker in free field and without edge diffraction.
+Script that recreates the measured directivity for a closed box loudspeaker in free field and 
+without edge diffraction.
 """
 
 #load measurements as a python dictionary from a .mat file
@@ -31,6 +37,7 @@ f_idx = np.searchsorted(f_directivity, freqs)
 
 p = data[:, 1, f_idx]
 p_ref = data[0, 1, f_idx]
+
 
 #plot initial/true directivity
 plt.polar(theta / 180 * np.pi, dB(p/p_ref))
@@ -57,6 +64,8 @@ for position in eq_source_positions:
 x = radius*np.cos(theta/180*np.pi)
 y = np.zeros(len(x))
 z = radius*np.sin(theta/180*np.pi)
+
+print(theta)
 
 receiver_positions = []
 for i in range(len(x)):
@@ -106,7 +115,8 @@ for i, position in enumerate(receiver_positions):
         p_tot_all_directions[i, j] = mpoles.get_pressure(receiver_pos=position, single_freq=freq)
 
 
-
+#this is added... Using the simulated p_ref instead of the measured
+p_ref = p_tot_all_directions[0,:]
 
 #plot directivity
 plt.polar(theta / 180 * np.pi, dB(np.abs(p_tot_all_directions /p_ref)))
@@ -117,6 +127,7 @@ plt.legend(['{} Hz'.format(f) for f in freqs], bbox_to_anchor = (1,1))
 plt.show()
 
 #last but not least we plot the vibration pattern of the diaphragm.
+#todo: this is not working properly, fix....
 fig = plt.figure()
 ax = plt.axes(projection = '3d')
 

@@ -6,4 +6,4 @@ Constants in the acoustics
 C = 343 #m/s
 
 #density of air
-RHO_0 = 1.2 #kg/m^3
+RHO_0 = 1.21 #kg/m^3

@@ -1,6 +1,11 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
+plt.rcParams['font.size'] = 14
+plt.rcParams['xtick.labelsize'] = 12
+plt.rcParams['ytick.labelsize'] = 12
+from setup import filepaths
 
 
 class Loudspeaker():
@@ -58,22 +63,24 @@ class Loudspeaker():
         corners[7, :] = [-self.x / 2, self.y / 2, -self.z]
         return corners
 
-
     def get_baffle_plane_corners(self):
-        #???
-        plane_corners = np.zeros([6,4])
-
-        plane_corners[0,:] = []
-
+        plane_corners = np.array([[1, 2, 3, 4],
+                         [1, 5, 6, 2],
+                         [2, 6, 7, 3],
+                         [4, 3, 7, 8],
+                         [1, 4, 8, 5],
+                         [8, 7, 6, 5]])
+        return plane_corners
 
     def get_monopole_posistions(self, plot:bool = False):
         def pol2cart(r, theta):
             x = r * np.cos(theta)
             y = r * np.sin(theta)
-            z = 0
+            z = 0.001
             return (x, y, z)
 
-        spacing = self.driver_radius/self.n_layers
+        spacing = self.driver_radius/(2*self.n_layers+1)
+        radius_steps = np.linspace(2,self.n_layers*2, self.n_layers, dtype=int)
 
         n_sources = 1
         n_first_layer = 8
@@ -86,7 +93,7 @@ class Loudspeaker():
 
         monopole_positions = np.zeros([n_sources,3])
 
-        monopole_positions[0,:] = [0.0, 0.0, 0.0] # first monopole has pos in origo
+        monopole_positions[0,:] = [0.0, 0.0, 0.001] # first monopole has pos in origo
 
         first_idx = 1
 
@@ -94,7 +101,7 @@ class Loudspeaker():
             n_current_layer = n_first_layer*(i+1)
 
             theta = np.linspace(0,2*np.pi-(2*np.pi/n_current_layer), n_current_layer)
-            radius = spacing*(i+1)
+            radius = radius_steps[i]*spacing
 
             for j in range(n_current_layer):
                 monopole_positions[first_idx+j,:] = pol2cart(radius,theta[j])
@@ -108,13 +115,7 @@ class Loudspeaker():
 
         return monopole_positions
 
-
-
-
-
-
-
-    def plot(self):
+    def plot(self, savefig = False, fname = filepaths.drop_box_media, dpi = 300, bbox_inches='tight'):
         """
         plots the baffle with the monopoles on top
         Returns
@@ -122,6 +123,7 @@ class Loudspeaker():
 
         """
         #fig = plt.figure(figsize=(10, 7))
+        plt.figure(figsize=(8,6))
         ax = plt.axes(projection="3d")
 
         # Creating plot
@@ -132,7 +134,7 @@ class Loudspeaker():
         z = monopole_positions[:,2]
 
         ax.scatter3D(x, y, z, color="black")
-        plt.title("Simulated Loudspeaker")
+        #plt.title("Simulated Loudspeaker")
 
         # show plot
 
@@ -188,18 +190,20 @@ class Loudspeaker():
 
 
         ax.scatter3D(points[:, 0], points[:, 1], points[:, 2])
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
+        ax.set_xlabel('x[m]')
+        ax.set_ylabel('y[m]')
+        ax.set_zlabel('z[m]')
 
         #set equal axes
         ax.set_box_aspect([self.x, self.y, self.z])
-
+        if savefig == True:
+            plt.savefig(fname = fname, dpi = dpi, bbox_inches = bbox_inches)
         plt.show()
 
 if __name__ == "__main__":
 
-    loudspeaker = Loudspeaker()
-    #positions = loudspeaker.get_monopole_posistions()
-    loudspeaker.plot()
+    loudspeaker = Loudspeaker(n_layers=2)
+    positions = loudspeaker.get_monopole_posistions()
+
+
 

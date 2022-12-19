@@ -1,6 +1,14 @@
-from constants import constant
+import os.path
+
+from setup import constants
 import numpy as np
 import matplotlib.pyplot as plt
+
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
+plt.rcParams['font.size'] = 14
+plt.rcParams['xtick.labelsize'] = 12
+plt.rcParams['ytick.labelsize'] = 12
 
 
 class Monopole():
@@ -56,11 +64,16 @@ class Monopole():
         r = np.sqrt((xr-xs)**2+(yr-ys)**2+(zr-zs)**2)
 
         w = 2*np.pi*single_freq
-        k = w / constant.C
+        k = w / constants.C
         p = self.q*np.exp(-1j*k*r)/r
         return p
 
-    def plot(self, r_max :float = 1, res:int = 50, inspection_height:float = None, single_freq :float = 1000):
+    def plot(self,
+             r_max :float = 1,
+             res:int = 50,
+             inspection_height:float = None,
+             single_freq :float = 1000,
+             savefig : bool = False):
         """
         Plots a snap shot of the sound field of a monopole in 2D in the x-y-plane.
         The height of the "sheet" is determined by the inspection_height variable.
@@ -100,18 +113,30 @@ class Monopole():
         plt.imshow(np.real(p), cmap='hot', interpolation="nearest",
                    extent=[x_pos - r_max, x_pos + r_max, y_pos - r_max, y_pos + r_max])
 
-        plt.title("Snap shot of the sound pressure from a monopole source")
-        plt.xlabel("x [m]")
-        plt.ylabel("y [m]")
+        #plt.title("Snap shot of the sound pressure from a monopole source")
+        #plt.xlabel("x [m]")
+        #plt.ylabel("y [m]")
+        plt.xticks(color="w")
+        plt.yticks(color="w")
+        plt.tick_params(bottom=False)
+        plt.tick_params(left=False)
+
+        if savefig == True:
+            import setup.filepaths as filepath
+            filename = "monopole_sound_field_ff.png"
+            full_path = os.path.join(filepath.drop_box_media_results, filename)
+            if os.path.exists(full_path):
+                ans = input(f'File "{filename}" already exists. Overwrite? (y/n)')
+                if ans == ("y" or "Y"):
+                    plt.savefig(fname=full_path, dpi = 200)
+                else:
+                    pass
         plt.show()
 
 
 
 if __name__ == "__main__":
-
     monopole = Monopole(pos = [0,0,0])
-
     receiver = [0,0,-1]
-
     f = 1000
-    monopole.plot(r_max=1,single_freq=f,res=100)
+    monopole.plot(r_max=1,single_freq=f,res=300, inspection_height=0.02)

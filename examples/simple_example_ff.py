@@ -3,7 +3,6 @@ Simple example on how to calculate the complex amplitudes of 5 monopoles when us
 a single monopole placed in the origin.
 """
 
-
 from acoustics.monopoles import Monopoles
 from acoustics.monopole import Monopole
 import numpy as np
