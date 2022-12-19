@@ -1,6 +1,6 @@
 # loudspeaker_modeling
 
-This repositary is created for my project thesis in the final year of NTNU. 
+This repositary is created by Jesper Holsten for the project thesis in the final year of NTNU. 
 
 Greatly inspired by certain scripts included in Ulf Peter Svenssons EDtoolbox:
 
